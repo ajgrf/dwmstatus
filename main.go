@@ -8,7 +8,7 @@ import (
 
 type Cell func(chan<- string)
 
-func Status(cells []Cell, sep string) {
+func Status(sep string, cells ...Cell) {
 	var ts = make([]string, len(cells))
 	var cases []reflect.SelectCase
 	for _, cell := range cells {
@@ -28,5 +28,5 @@ func Status(cells []Cell, sep string) {
 func main() {
 	sep := flag.String("sep", " | ", "separator string to be placed between elements")
 	flag.Parse()
-	Status([]Cell{Packages, Volume, Clock}, *sep)
+	Status(*sep, Packages, Volume, Clock)
 }
