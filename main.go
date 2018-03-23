@@ -1,14 +1,13 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"reflect"
 )
 
 type Cell func(chan<- string)
 
-func Status(sep string, cells ...Cell) {
+func Status(cells ...Cell) {
 	var ts = make([]string, len(cells))
 	var cases []reflect.SelectCase
 	for _, cell := range cells {
@@ -21,12 +20,10 @@ func Status(sep string, cells ...Cell) {
 		index, value, _ := reflect.Select(cases)
 		text := value.Interface().(string)
 		ts[index] = text
-		fmt.Println(Join(ts, sep))
+		fmt.Println(Join(ts, " | "))
 	}
 }
 
 func main() {
-	sep := flag.String("sep", " | ", "separator string to be placed between elements")
-	flag.Parse()
-	Status(*sep, Volume, Clock)
+	Status(Volume, Clock)
 }
