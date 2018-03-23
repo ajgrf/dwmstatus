@@ -28,5 +28,5 @@ func Status(sep string, cells ...Cell) {
 func main() {
 	sep := flag.String("sep", " | ", "separator string to be placed between elements")
 	flag.Parse()
-	Status(*sep, Packages, Volume, Clock)
+	Status(*sep, Volume, Clock)
 }
