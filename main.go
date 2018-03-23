@@ -1,13 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"reflect"
+
+	"github.com/BurntSushi/xgb"
+	"github.com/BurntSushi/xgb/xproto"
 )
 
 type Cell func(chan<- string)
 
 func Status(cells ...Cell) {
+	// init X connection & find root window
+	x, err := xgb.NewConn()
+	if err != nil {
+		panic(err)
+	}
+	root := xproto.Setup(x).DefaultScreen(x).Root
+
 	var ts = make([]string, len(cells))
 	var cases []reflect.SelectCase
 	for _, cell := range cells {
@@ -20,7 +29,11 @@ func Status(cells ...Cell) {
 		index, value, _ := reflect.Select(cases)
 		text := value.Interface().(string)
 		ts[index] = text
-		fmt.Println(Join(ts, " | "))
+		status := Join(ts, " | ")
+
+		// set root window name with status text
+		xproto.ChangeProperty(x, xproto.PropModeReplace, root, xproto.AtomWmName,
+			xproto.AtomString, 8, uint32(len(status)), []byte(status))
 	}
 }
 
