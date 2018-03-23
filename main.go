@@ -37,6 +37,21 @@ func Status(cells ...Cell) {
 	}
 }
 
+func Join(a []string, sep string) string {
+	var first bool
+	var b string
+	for i := range a {
+		if a[i] != "" {
+			if first {
+				b += sep
+			}
+			b += a[i]
+			first = true
+		}
+	}
+	return b
+}
+
 func main() {
 	Status(Volume, Clock)
 }

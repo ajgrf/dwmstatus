@@ -40,6 +40,35 @@ func Volume(ch chan<- string) {
 	}
 }
 
+func Timeout(ival time.Duration, in <-chan string, out chan<- string) {
+	ch := make(chan string)
+	defer close(ch)
+	go Uniq(ch, out)
+	for {
+		select {
+		case msg, ok := <-in:
+			if ok {
+				ch <- msg
+			} else {
+				break
+			}
+		case <-time.After(ival):
+			ch <- ""
+		}
+	}
+}
+
+func Uniq(in <-chan string, out chan<- string) {
+	defer close(out)
+	var last string
+	for s, ok := <-in; ok; s, ok = <-in {
+		if s != last {
+			out <- s
+		}
+		last = s
+	}
+}
+
 // Mixer represents an ALSA mixer to query for audio volume levels. A Mixer
 // should be created by a call to NewMixer and closed when it's no longer
 // needed.
