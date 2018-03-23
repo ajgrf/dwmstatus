@@ -1,5 +1,5 @@
 #!/bin/sh
 
 while read -r line; do
-	/usr/bin/xsetroot -name "$line"
+	xsetroot -name "$line"
 done
