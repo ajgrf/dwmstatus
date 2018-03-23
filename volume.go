@@ -9,6 +9,7 @@ import (
 	"math"
 	"os"
 	"syscall"
+	"time"
 	"unsafe"
 )
 
@@ -21,6 +22,10 @@ func Volume(ch chan<- string) {
 	}
 	defer mixer.Close()
 
+	tc := make(chan string)
+	defer close(tc)
+	go Timeout(5*time.Second, tc, ch)
+
 	for {
 		mixer.Wait()
 		volume, muted, err := mixer.Volume()
@@ -28,9 +33,9 @@ func Volume(ch chan<- string) {
 			fmt.Fprintln(os.Stderr, err)
 			return
 		} else if muted {
-			ch <- "V:mute"
+			tc <- "V:mute"
 		} else {
-			ch <- fmt.Sprintf("V:%3d%%", volume)
+			tc <- fmt.Sprintf("V:%3d%%", volume)
 		}
 	}
 }
