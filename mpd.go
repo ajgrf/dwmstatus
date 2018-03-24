@@ -31,7 +31,7 @@ func MPD(ch chan<- string) {
 	defer conn.Close()
 
 	go func() {
-		for err := conn.Ping(); err == nil; err = conn.Ping() {
+		for conn.Ping() == nil {
 			time.Sleep(30 * time.Second)
 		}
 	}()
