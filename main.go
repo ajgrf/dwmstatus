@@ -15,7 +15,13 @@ import (
 
 type Cell func(chan<- string)
 
-var StatusBar = []Cell{MPD, Volume, Battery("BAT0"), Clock}
+var StatusBar = []Cell{
+	MPD,
+	Loadavg,
+	Volume,
+	Battery("BAT0"),
+	Clock,
+}
 
 func Run(bar []Cell) <-chan string {
 	out := make(chan string)
