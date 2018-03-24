@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/fhs/gompd/mpd"
@@ -14,16 +15,21 @@ func MPD(ch chan<- string) {
 		ch <- ""
 	}()
 
-	mpdHost := os.Getenv("MPD_HOST")
+	var mpdHost, mpdPort, mpdPassword string
+	mpdHost = os.Getenv("MPD_HOST")
+	mpdPort = os.Getenv("MPD_PORT")
 	if mpdHost == "" {
 		mpdHost = "localhost"
+	} else if strings.Contains(mpdHost, "@") {
+		fields := strings.SplitN(mpdHost, "@", 2)
+		mpdPassword = fields[0]
+		mpdHost = fields[1]
 	}
-	mpdPort := os.Getenv("MPD_PORT")
 	if mpdPort == "" {
 		mpdPort = "6600"
 	}
 
-	conn, err := mpd.Dial("tcp", mpdHost+":"+mpdPort)
+	conn, err := mpd.DialAuthenticated("tcp", mpdHost+":"+mpdPort, mpdPassword)
 	if err != nil {
 		log.Println(err)
 		return
@@ -36,7 +42,7 @@ func MPD(ch chan<- string) {
 		}
 	}()
 
-	w, err := mpd.NewWatcher("tcp", mpdHost+":"+mpdPort, "", "player")
+	w, err := mpd.NewWatcher("tcp", mpdHost+":"+mpdPort, mpdPassword, "player")
 	if err != nil {
 		log.Println(err)
 		return
