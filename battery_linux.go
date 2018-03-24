@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -18,7 +17,7 @@ func Battery(bat string) func(chan<- string) {
 				log.Println(err)
 				return
 			}
-			capacity, err := strconv.Atoi(string(bytes.TrimSpace(b)))
+			capacity, err := strconv.Atoi(string(b[:len(b)-1]))
 			if err != nil {
 				log.Println(err)
 				return
