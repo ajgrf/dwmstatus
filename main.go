@@ -13,11 +13,11 @@ import (
 	"github.com/BurntSushi/xgb/xproto"
 )
 
-type StatusBar []Cell
-
 type Cell func(chan<- string)
 
-func (bar StatusBar) Run() <-chan string {
+var StatusBar = []Cell{Volume, Clock}
+
+func Run(bar []Cell) <-chan string {
 	out := make(chan string)
 	go func() {
 		var ts = make([]string, len(bar))
@@ -84,7 +84,7 @@ func main() {
 		}
 	}
 
-	statc := StatusBar{Volume, Clock}.Run()
+	statc := Run(StatusBar)
 	sigc := make(chan os.Signal, 1)
 	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)
 	for {
