@@ -18,12 +18,14 @@ func (bar StatusBar) Run() <-chan string {
 	out := make(chan string)
 	go func() {
 		var ts = make([]string, len(bar))
-		var cases []reflect.SelectCase
-		for _, cell := range bar {
+		var cases = make([]reflect.SelectCase, len(bar))
+		for i, cell := range bar {
 			ch := make(chan string)
 			go cell(ch)
-			cases = append(cases, reflect.SelectCase{Dir: reflect.SelectRecv,
-				Chan: reflect.ValueOf(ch)})
+			cases[i] = reflect.SelectCase{
+				Dir:  reflect.SelectRecv,
+				Chan: reflect.ValueOf(ch),
+			}
 		}
 		for {
 			index, value, _ := reflect.Select(cases)
