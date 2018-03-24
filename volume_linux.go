@@ -6,8 +6,8 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math"
-	"os"
 	"syscall"
 	"time"
 	"unsafe"
@@ -18,7 +18,8 @@ const SND_CTL_TLV_DB_GAIN_MUTE = -9999999
 func Volume(ch chan<- string) {
 	mixer, err := NewMixer("default", "Master")
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 	defer mixer.Close()
 
@@ -30,7 +31,7 @@ func Volume(ch chan<- string) {
 		mixer.Wait()
 		volume, muted, err := mixer.Volume()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			log.Println(err)
 			return
 		} else if muted {
 			tc <- "V:mute"

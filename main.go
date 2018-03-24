@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"reflect"
 
 	"github.com/BurntSushi/xgb"
@@ -65,7 +66,7 @@ func main() {
 		// init X connection & find root window
 		x, err := xgb.NewConn()
 		if err != nil {
-			panic(err)
+			log.Fatalln(err)
 		}
 		defer x.Close()
 		root := xproto.Setup(x).DefaultScreen(x).Root
