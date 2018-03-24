@@ -33,8 +33,10 @@ func Run(bar []Cell) <-chan string {
 		for {
 			index, value, _ := reflect.Select(cases)
 			text := value.Interface().(string)
-			ts[index] = text
-			out <- FormatStatus(ts, " | ")
+			if text != ts[index] {
+				ts[index] = text
+				out <- FormatStatus(ts, " | ")
+			}
 		}
 	}()
 	return out
