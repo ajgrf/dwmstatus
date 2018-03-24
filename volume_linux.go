@@ -42,31 +42,17 @@ func Volume(ch chan<- string) {
 }
 
 func Timeout(ival time.Duration, in <-chan string, out chan<- string) {
-	ch := make(chan string)
-	defer close(ch)
-	go Uniq(ch, out)
 	for {
 		select {
 		case msg, ok := <-in:
 			if ok {
-				ch <- msg
+				out <- msg
 			} else {
 				break
 			}
 		case <-time.After(ival):
-			ch <- ""
+			out <- ""
 		}
-	}
-}
-
-func Uniq(in <-chan string, out chan<- string) {
-	defer close(out)
-	var last string
-	for s, ok := <-in; ok; s, ok = <-in {
-		if s != last {
-			out <- s
-		}
-		last = s
 	}
 }
 
