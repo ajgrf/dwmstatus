@@ -4,7 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
 	"reflect"
+	"syscall"
 
 	"github.com/BurntSushi/xgb"
 	"github.com/BurntSushi/xgb/xproto"
@@ -81,8 +84,16 @@ func main() {
 		}
 	}
 
-	stats := StatusBar{Volume, Clock}.Run()
+	statc := StatusBar{Volume, Clock}.Run()
+	sigc := make(chan os.Signal, 1)
+	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)
 	for {
-		updateStatus(<-stats)
+		select {
+		case status := <-statc:
+			updateStatus(status)
+		case <-sigc:
+			updateStatus("")
+			os.Exit(1)
+		}
 	}
 }
