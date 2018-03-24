@@ -27,8 +27,8 @@ func Volume(ch chan<- string) {
 	defer close(tc)
 	go Timeout(5*time.Second, tc, ch)
 
-	for {
-		mixer.Wait()
+	mixer.Wait()
+	for mixer.Wait() == nil {
 		volume, muted, err := mixer.Volume()
 		if err != nil {
 			log.Println(err)
