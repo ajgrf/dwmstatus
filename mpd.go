@@ -10,6 +10,8 @@ import (
 	"github.com/fhs/gompd/mpd"
 )
 
+const maxSongLen = 100
+
 func MPD(ch chan<- string) {
 	defer func() {
 		ch <- ""
@@ -73,11 +75,15 @@ func MPD(ch chan<- string) {
 			if song["Artist"] != "" {
 				s = song["Artist"] + " - " + s
 			}
+
 			if s == "" {
 				s = filepath.Base(song["file"])
+			} else if len(s) > maxSongLen {
+				s = s[:maxSongLen-3] + "..."
 			}
 
 			ch <- s
+
 		} else {
 			ch <- ""
 		}
