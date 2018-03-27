@@ -20,6 +20,7 @@ var StatusBar = []Cell{
 	Loadavg,
 	Volume,
 	Battery("BAT0"),
+	Weather(myZip),
 	Clock,
 }
 
