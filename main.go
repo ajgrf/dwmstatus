@@ -17,10 +17,10 @@ type Cell func(chan<- string)
 
 var StatusBar = []Cell{
 	MPD,
+	Weather(myZip),
 	Loadavg,
 	Volume,
 	Battery("BAT0"),
-	Weather(myZip),
 	Clock,
 }
 
