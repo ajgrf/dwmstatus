@@ -17,7 +17,11 @@ func Weather(zip int) func(chan<- string) {
 				return
 			}
 
-			w.CurrentByZip(zip, "us")
+			err = w.CurrentByZip(zip, "us")
+			if err != nil {
+				log.Println(err)
+				return
+			}
 			ch <- fmt.Sprintf("%.0f°F %v", w.Main.Temp, w.Weather[0].Description)
 
 			time.Sleep(15 * time.Minute)
