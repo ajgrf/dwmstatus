@@ -17,6 +17,7 @@ type Cell func(chan<- string)
 
 var StatusBar = []Cell{
 	MPD,
+	Mail(os.Getenv("HOME") + "/mail/Inbox"),
 	Weather(myZip),
 	Loadavg,
 	Volume,
